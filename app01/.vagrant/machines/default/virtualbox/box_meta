@@ -1,1 +1,1 @@
-{"name":"centos/7","version":"2004.01","provider":"virtualbox","directory":"boxes/centos-VAGRANTSLASH-7/2004.01/virtualbox"}
+{"name":"debian/bookworm64","version":"12.20250126.1","provider":"virtualbox","directory":"boxes/debian-VAGRANTSLASH-bookworm64/12.20250126.1/amd64/virtualbox"}

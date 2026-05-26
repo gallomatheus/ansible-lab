@@ -1,0 +1,31 @@
+- hosts: db
+  become: true
+
+  tasks:
+
+    - name: Atualizar cache apt
+      apt:
+        update_cache: yes
+
+    - name: Instalar MariaDB
+      apt:
+        name: mariadb-server
+        state: present
+
+    - name: Garantir MariaDB iniciado
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+    - name: Instalar dependência Python MySQL
+      apt:
+        name: python3-pymysql
+        state: present
+
+    - name: Criar usuário MySQL
+      mysql_user:
+        name: vagrant
+        password: vagrant
+        priv: '*.*:ALL,GRANT'
+        state: present      

@@ -1,0 +1,88 @@
+-- ansible.cfg --
+[defaults]
+inventory = hosts
+host_key_checking = False
+
+-- Criar inventory de hosts -- 
+mkdir ~/ansible-lab
+ou usar na /vagrant
+vi hosts
+
+[app]
+app01 ansible_host=xxx.xxx.x.x
+
+[db]
+db01 ansible_host=xxx.xxx.x.x
+
+
+-- Ver conectividade entre as máquinas --
+ansible all -i hosts -m ping
+
+-- Ver hostname -- 
+ansible all -i hosts -a "hostname"
+
+--  Ver uptime --  
+ansible all -i hosts -a "uptime"
+
+-- Ver memória -- 
+ansible all -i hosts -a "free -h"
+
+--  Atualizar pacotes--  
+ansible all -i hosts -b -a "apt-get update"
+
+--  Instalar pacote remotamente--  
+ansible app -i hosts -b -m apt -a "name=nginx state=present"
+
+
+
+-- Playbooks são pacotes de instalação que instalamos remotamente a partir da control-node --
+-- Criar playbook (instalar nginx remotamente) --
+- hosts: app
+  become: yes
+
+  tasks:
+
+    - name: Instalar nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Garantir nginx iniciado
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+-- Rodar a playbook remotamente (ele puxa o ip da hosts) -- 
+ansible-playbook -i hosts nginx.yml
+
+
+
+-- Playbook mariadb --
+
+- hosts: db
+  become: yes
+
+  tasks:
+
+    - name: Atualizar repositórios
+      apt:
+        update_cache: yes
+
+    - name: Instalar MariaDB
+      apt:
+        name: mariadb-server
+        state: present
+
+    - name: Garantir MariaDB iniciado
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+-- Executar playbook --
+ansible-playbook -i hosts mariadb.yml
+
+
+-- Caso preferir organizar as playbooks numa pasta, para rodar use o caminho completo --
+ansible-playbook -i hosts playbooks/nginx.yml
