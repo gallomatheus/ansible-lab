@@ -73,8 +73,7 @@ ansible-playbook -i hosts nginx.yml --diff
 - hosts: app
   become: yes
 
-  tasks:
-
+### Tasks
     - name: Instalar nginx
       apt:
         name: nginx
@@ -82,48 +81,48 @@ ansible-playbook -i hosts nginx.yml --diff
 
 ## Módulos importantes
 ### apt
-- name: Instalar pacote
-  apt:
-    name: nginx
-    state: present
+  - name: Instalar pacote
+    apt:
+      name: nginx
+      state: present
 
 ### service
-- name: Iniciar serviço
-  service:
-    name: nginx
-    state: started
-    enabled: yes
+  - name: Iniciar serviço
+    service:
+      name: nginx
+      state: started
+      enabled: yes
     
 ### copy
-- name: Copiar arquivo
-  copy:
-    src: index.html
-    dest: /var/www/html/index.html
+  - name: Copiar arquivo
+    copy:
+      src: index.html
+      dest: /var/www/html/index.html
 
 ### file
-- name: Criar diretório
-  file:
-    path: /app
-    state: directory
+  - name: Criar diretório
+    file:
+      path: /app
+      state: directory
 
 ### git
-- name: Clonar repositório
-  git:
-    repo: https://github.com/user/repo.git
-    dest: /app
+  - name: Clonar repositório
+    git:
+      repo: https://github.com/user/repo.git
+      dest: /app
 
 ### shell
-- name: Executar shell
-  shell: docker ps
+  - name: Executar shell
+    shell: docker ps
 
 ### command
-- name: Executar comando
-  command: uptime
+  - name: Executar comando
+    command: uptime
 
 # Variables:
 ## Exemplo variável
-vars:
-  app_port: 8080
+  vars:
+    app_port: 8080
 
 ## Utilizar variável
 content: "Porta {{ app_port }}"
@@ -182,43 +181,47 @@ ssh vagrant@192.168.1.3
 [defaults]
 inventory = hosts
 host_key_checking = False
-Namespaces e grupos
-Grupo APP
-[app]
-app01
-app02
-Grupo DB
-[db]
-db01
-MariaDB/MySQL
+
+# Namespaces e grupos
+## Grupo APP
+  [app]
+  app01
+  app02
+
+## Grupo DB
+  [db]
+  db01
+  MariaDB/MySQL
 
 ## Instalar MariaDB
-- name: Instalar MariaDB
-  apt:
-    name: mariadb-server
-    state: present
+  - name: Instalar MariaDB
+    apt:
+      name: mariadb-server
+      state: present
 
 ##  Iniciar MariaDB
-- name: Iniciar MariaDB
-  service:
-    name: mariadb
-    state: started
+  - name: Iniciar MariaDB
+    service:
+      name: mariadb
+      state: started
 
 # Docker + Ansible:
 ## Instalar Docker
-- name: Instalar Docker
-  apt:
-    name: docker.io
-    state: present
+  - name: Instalar Docker
+    apt:
+      name: docker.io
+      state: present
+
 
 ## Rodar container
-- name: Subir container nginx
-  docker_container:
-    name: nginx
-    image: nginx
-    state: started
-    ports:
-      - "80:80"
+  - name: Subir container nginx
+    docker_container:
+      name: nginx
+      image: nginx
+      state: started
+      ports:
+        - "80:80"
+
 
 # Vagrant + Ansible:
 ## Subir VM
@@ -249,27 +252,27 @@ journalctl -u nginx
 ## Ver status serviço
 systemctl status nginx
 
-Estrutura recomendada:
-ansible-lab/
-├── hosts
-├── ansible.cfg
-├── playbooks/
-│   ├── nginx.yml
-│   └── mariadb.yml
-│
-├── roles/
-│
-├── group_vars/
-│
-└── templates/
+# Estrutura recomendada:
+  ansible-lab/
+  ├── hosts
+  ├── ansible.cfg
+  ├── playbooks/
+  │   ├── nginx.yml
+  │   └── mariadb.yml
+  │
+  ├── roles/
+  │
+  ├── group_vars/
+  │
+  └── templates/
 
-Fluxo DevOps com Ansible:
-Control Node
-      ↓
-SSH
-      ↓
-Managed Hosts
-      ↓
-Playbooks YAML
-      ↓
-Automação Infraestrutura
+# Fluxo DevOps com Ansible:
+  Control Node
+        ↓
+  SSH
+        ↓
+  Managed Hosts
+        ↓
+  Playbooks YAML
+        ↓
+  Automação Infraestrutura
