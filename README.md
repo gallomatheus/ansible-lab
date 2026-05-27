@@ -7,272 +7,271 @@ Documentação com comandos essenciais do Ansible utilizando Linux, Vagrant e m�
 # Verificar instalação
 
 ## Ver versão do Ansible
-ansible --version
+    ansible --version
 
 
 ## Ver localização do Ansible
-which ansible
+    which ansible
 
 # Inventory:
 ## Exemplo inventory:
-[app]
-app01 ansible_host=192.168.1.3
-
-[db]
-db01 ansible_host=192.168.1.4
+    [app]
+    app01 ansible_host=192.168.1.3
+    
+    [db]
+    db01 ansible_host=192.168.1.4
 
 # Testes de conectividade:
 ## Testar ping em todos hosts
-ansible all -i hosts -m ping
+    ansible all -i hosts -m ping
 
 ## Testar grupo específico
-ansible app -i hosts -m ping
+    ansible app -i hosts -m ping
 
 ## Ver hostname remoto
-ansible all -i hosts -a "hostname"
+    ansible all -i hosts -a "hostname"
 
 ## Ver uptime remoto
-ansible all -i hosts -a "uptime"
+    ansible all -i hosts -a "uptime"
 
 # Comandos Ad-Hoc:
 ## Atualizar pacotes
-ansible all -i hosts -b -a "apt-get update"
+    ansible all -i hosts -b -a "apt-get update"
 
 ## Instalar nginx
-ansible app -i hosts -b -m apt -a "name=nginx state=present"
+    ansible app -i hosts -b -m apt -a "name=nginx state=present"
 
 ## Reiniciar serviço
-ansible app -i hosts -b -m service -a "name=nginx state=restarted"
+    ansible app -i hosts -b -m service -a "name=nginx state=restarted"
 
 ## Criar diretório
-ansible all -i hosts -b -m file -a "path=/app state=directory"
+    ansible all -i hosts -b -m file -a "path=/app state=directory"
 
 ## Copiar arquivo
-ansible all -i hosts -b -m copy -a "src=index.html dest=/var/www/html/index.html"
+    ansible all -i hosts -b -m copy -a "src=index.html dest=/var/www/html/index.html"
 
 ## Criar usuário Linux
-ansible all -i hosts -b -m user -a "name=devops state=present"
+    ansible all -i hosts -b -m user -a "name=devops state=present"
 
 # Playbooks:
 ## Executar playbook
-ansible-playbook -i hosts nginx.yml
+    ansible-playbook -i hosts nginx.yml
 
 ## Executar com verbose
-ansible-playbook -i hosts nginx.yml -v
+    ansible-playbook -i hosts nginx.yml -v
 
 ## Mais detalhes
-ansible-playbook -i hosts nginx.yml -vvv
+    ansible-playbook -i hosts nginx.yml -vvv
 
 ## Simular execução
-ansible-playbook -i hosts nginx.yml --check
+    ansible-playbook -i hosts nginx.yml --check
 
 ## Ver diferenças
-ansible-playbook -i hosts nginx.yml --diff
+    ansible-playbook -i hosts nginx.yml --diff
 
 ## Estrutura básica playbook
-- hosts: app
-  become: yes
+    - hosts: app
+      become: yes
 
 ### Tasks
     - name: Instalar nginx
-      apt:
+        apt:
         name: nginx
         state: present
 
 ## Módulos importantes
 ### apt
-  - name: Instalar pacote
-    apt:
-      name: nginx
-      state: present
+    - name: Instalar pacote
+      apt:
+        name: nginx
+        state: present
 
 ### service
-  - name: Iniciar serviço
-    service:
-      name: nginx
-      state: started
-      enabled: yes
+    - name: Iniciar serviço
+      service:
+        name: nginx
+        state: started
+        enabled: yes
     
 ### copy
-  - name: Copiar arquivo
-    copy:
-      src: index.html
-      dest: /var/www/html/index.html
+    - name: Copiar arquivo
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
 
 ### file
-  - name: Criar diretório
-    file:
-      path: /app
-      state: directory
+    - name: Criar diretório
+      file:
+        path: /app
+        state: directory
 
 ### git
-  - name: Clonar repositório
-    git:
-      repo: https://github.com/user/repo.git
-      dest: /app
+    - name: Clonar repositório
+      git:
+        repo: https://github.com/user/repo.git
+        dest: /app
 
 ### shell
-  - name: Executar shell
-    shell: docker ps
+    - name: Executar shell
+      shell: docker ps
 
 ### command
-  - name: Executar comando
-    command: uptime
+    - name: Executar comando
+      command: uptime
 
 # Variables:
 ## Exemplo variável
-  vars:
-    app_port: 8080
+    vars:
+      app_port: 8080
 
 ## Utilizar variável
-content: "Porta {{ app_port }}"
+    content: "Porta {{ app_port }}"
 
 # Handlers:
 ## Exemplo handler
-handlers:
-
-  - name: restart nginx
-    service:
-      name: nginx
-      state: restarted
-Notify handler
-notify:
-  - restart nginx
+    handlers:
+      - name: restart nginx
+        service:
+          name: nginx
+          state: restarted
+    Notify handler
+    notify:
+      - restart nginx
 
 ## Templates
-Template Jinja2
-- name: Copiar template
-  template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
+    Template Jinja2
+    - name: Copiar template
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
 
 # Roles
 ## Criar role
-ansible-galaxy init nginx
-Estrutura role
-roles/
-└── nginx/
-    ├── tasks/
-    ├── handlers/
-    ├── templates/
-    ├── vars/
-    └── defaults/
+    ansible-galaxy init nginx
+    Estrutura role
+    roles/
+    └── nginx/
+        ├── tasks/
+        ├── handlers/
+        ├── templates/
+        ├── vars/
+        └── defaults/
 
 # Facts:
 ## Ver facts
-ansible all -i hosts -m setup
+    ansible all -i hosts -m setup
 
 ## Ver IP hosts
-ansible all -i hosts -m setup | grep ansible_default_ipv4
+    ansible all -i hosts -m setup | grep ansible_default_ipv4
 
 # SSH:
 ## Gerar chave SSH
-ssh-keygen
+    ssh-keygen
 
 ## Copiar chave
-ssh-copy-id vagrant@192.168.1.3
+    ssh-copy-id vagrant@192.168.1.3
 
 ## Testar SSH
-ssh vagrant@192.168.1.3
+    ssh vagrant@192.168.1.3
 
 
 # ansible.cfg
 ## Exemplo
-[defaults]
-inventory = hosts
-host_key_checking = False
+    [defaults]
+    inventory = hosts
+    host_key_checking = False
 
 # Namespaces e grupos
 ## Grupo APP
-  [app]
-  app01
-  app02
+    [app]
+    app01
+    app02
 
 ## Grupo DB
-  [db]
-  db01
-  MariaDB/MySQL
+    [db]
+    db01
+    MariaDB/MySQL
 
 ## Instalar MariaDB
-  - name: Instalar MariaDB
-    apt:
-      name: mariadb-server
-      state: present
+    - name: Instalar MariaDB
+      apt:
+        name: mariadb-server
+        state: present
 
 ##  Iniciar MariaDB
-  - name: Iniciar MariaDB
-    service:
-      name: mariadb
-      state: started
+    - name: Iniciar MariaDB
+      service:
+        name: mariadb
+        state: started
 
 # Docker + Ansible:
 ## Instalar Docker
-  - name: Instalar Docker
-    apt:
-      name: docker.io
-      state: present
+    - name: Instalar Docker
+      apt:
+        name: docker.io
+        state: present
 
 
 ## Rodar container
-  - name: Subir container nginx
-    docker_container:
-      name: nginx
-      image: nginx
-      state: started
-      ports:
-        - "80:80"
+    - name: Subir container nginx
+      docker_container:
+        name: nginx
+        image: nginx
+        state: started
+        ports:
+          - "80:80"
 
 
 # Vagrant + Ansible:
 ## Subir VM
-vagrant up
+    vagrant up
 
 ## Entrar VM
-vagrant ssh
+    vagrant ssh
 
 ## Reiniciar VM
-vagrant reload
+    vagrant reload
 
 ## Reprovisionar
-vagrant reload --provision
+    vagrant reload --provision
 
 # Troubleshooting
 ## Verificar conectividade
-ansible all -i hosts -m ping
+    ansible all -i hosts -m ping
 
 ## Ver portas abertas
-ss -tulnp
+    ss -tulnp
 
 ## Ver IP Linux
-ip a
+    ip a
 
 ## Ver logs serviço
-journalctl -u nginx
+    journalctl -u nginx
 
 ## Ver status serviço
-systemctl status nginx
+    systemctl status nginx
 
 # Estrutura recomendada:
-  ansible-lab/
-  ├── hosts
-  ├── ansible.cfg
-  ├── playbooks/
-  │   ├── nginx.yml
-  │   └── mariadb.yml
-  │
-  ├── roles/
-  │
-  ├── group_vars/
-  │
-  └── templates/
+    ansible-lab/
+    ├── hosts
+    ├── ansible.cfg
+    ├── playbooks/
+    │   ├── nginx.yml
+    │   └── mariadb.yml
+    │
+    ├── roles/
+    │
+    ├── group_vars/
+    │
+    └── templates/
 
 # Fluxo DevOps com Ansible:
-  Control Node
-        ↓
-  SSH
-        ↓
-  Managed Hosts
-        ↓
-  Playbooks YAML
-        ↓
-  Automação Infraestrutura
+    Control Node
+          ↓
+    SSH
+          ↓
+    Managed Hosts
+          ↓
+    Playbooks YAML
+          ↓
+    Automação Infraestrutura
